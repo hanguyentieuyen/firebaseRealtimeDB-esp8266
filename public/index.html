@@ -1,46 +1,43 @@
 <html>
-    <head>
 
-        <title>ESP-RealtimeDatabase</title>
-        <link rel="stylesheet" type="text/css" href = "style.css"/>
-    </head>
-    <body>
+  <head>
 
-           
-            <div class="container">
-              
-                <div class="ledControl">
-                    <div id="circle" class="circle" ></div>
-                    <input type="button" class="btnOnOff" value="OFF" id="onoff" onclick="onoff()">
-                </div>
-                <div class="ledControl1">
-                    <div id="circle1" class="circle1" ></div>
-                    <input type="button" class="btnOnOff1" value="OFF" id="onoff1" onclick="onoff1()">
-                </div>
-            </div>
+    <title>ESP-RealtimeDatabase</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
 
-            <!-- <div class="led">
-                <h3>Turn on/off Led</h3>
-                <div>
-                    <button id="btn1" class="btn1"  onclick="offClick()">ON</button>
-                    <button class="btn2" onclick="offClick()">OFF</button>
-                </div>
-            </div> -->
-        
-            <div class="temp">
-                <h3>Nhiệt độ</h3>
-                <span id="textTemp"></span> <span>C</span>       
-            </div>
-            <div class="hum">
-                <h3>Độ ẩm</h3>
-                <span id="textHum"></span> <span>%</span>       
-            </div>
+  <body>
 
 
-            <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-functions.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-database.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-analytics.js">s</script>
-            <script src="script.js"></script>
-    </body>
+    <div class="container">
+
+      <div class="ledControl">
+        <div id="circle" class="circle"></div>
+        <input type="button" class="btnOnOff" value="OFF" id="onoff" onclick="onoff()">
+      </div>
+      <div class="ledControl1">
+        <div id="circle1" class="circle1"></div>
+        <input type="button" class="btnOnOff1" value="OFF" id="onoff1" onclick="onoff1()">
+      </div>
+    </div>
+
+
+
+    <div class="temp">
+      <h3>Nhiệt độ</h3>
+      <span id="textTemp"></span> <span>°C</span>
+    </div>
+    <div class="hum">
+      <h3>Độ ẩm</h3>
+      <span id="textHum"></span> <span>%</span>
+    </div>
+
+
+    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-functions.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-analytics.js"></script>
+    <script src="script.js"></script>
+  </body>
+
 </html>

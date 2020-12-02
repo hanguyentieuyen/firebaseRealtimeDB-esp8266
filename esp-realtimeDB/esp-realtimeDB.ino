@@ -1,27 +1,135 @@
-#include <ESP8266WiFi.h>                                               
-#include <FirebaseArduino.h> 
+#include <ESP8266WiFi.h>
+#include <FirebaseArduino.h>
+#include <DHT_U.h>
+#include <Adafruit_Sensor.h>
 #include <DHT.h>
-                                           
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+// 0x27: địa chỉ I2C của mạch chuyển I2C cho LCD
+#define DHTPIN D5 // kết nối chân data DHT D5
+#define DHTTYPE DHT11 //Sử dụng DHT11
+DHT_Unified dht(DHTPIN, DHTTYPE);
+//fire base
+#define FIREBASE_HOST "esprealtimedb.firebaseio.com"
+#define FIREBASE_AUTH "GEhbDHojbC8ccEGPOcrackwokjLo5Jx6I55AoXEJ"
+#define WIFI_SSID "Lau_2_new"
+#define WIFI_PASSWORD "danghuynhkienvan"
 
-#define FIREBASE_HOST "esprealtimedb.firebaseio.com"                         
-#define FIREBASE_AUTH "GEhbDHojbC8ccEGPOcrackwokjLo5Jx6I55AoXEJ"                    
-#define WIFI_SSID "mr.TranL"                                          
-#define WIFI_PASSWORD "0123456789" 
-// kết nối chân data DHT D4   
-#define DHTPIN D4  
-// Chọn loại DHT 11 (DHT11 và DHT22)          
-//#define DHTTYPE DHT11  
-//DHT dht (DHTPIN, DHTTYPE);                
+unsigned int NhietDo = 0, DoAm = 0;
+unsigned int delayDocNhietDo = 1000;  //ms
+unsigned long lastReadTemp;
+byte degree[8] = {  // dùng để hiển thị dấu độ
+  0B01110,
+  0B01010,
+  0B01110,
+  0B00000,
+  0B00000,
+  0B00000,
+  0B00000,
+  0B00000
+};
 // Biến lưu status từ firebase
-String ledStatus = "";                                                                                                                
+String ledStatus = "";
+
+/***************************************************************************************************/
+
+// Chương trình kiểm tra và hiển thị nhiệt độ LCD
+void KtVaHienThiNhietDo() {
+  if ( ((unsigned long) (millis() - lastReadTemp)) > delayDocNhietDo) {   // neu lan truoc doc cach day > delayDocNhietDo
+    //
+    unsigned int NhietDoTam = NhietDo;
+    unsigned int DoAmTam = DoAm;
+    // Get temperature event and print its value.
+    sensors_event_t event;
+    dht.temperature().getEvent(&event);
+    if (isnan(event.temperature)) {
+      Serial.println("Error reading temperature!");
+    }
+    else {
+      Serial.print("Temperature: ");
+      NhietDoTam = event.temperature;
+      Serial.print(NhietDoTam);
+      if (NhietDoTam != NhietDo) {
+        NhietDo = NhietDoTam;
+        lcd.setCursor(0, 0);
+        lcd.print("Nhiet Do:       ");
+        lcd.setCursor(10, 0);
+        lcd.print(NhietDo);
+        lcd.print(" ");
+        lcd.write(1);
+        lcd.print("C");
+      }
+      Serial.println(" *C");
+    }
+    // Get humidity event and print its value.
+    dht.humidity().getEvent(&event);
+    if (isnan(event.relative_humidity)) {
+      Serial.println("Error reading humidity!");
+    }
+    else {
+      Serial.print("Humidity: ");
+      DoAmTam = event.relative_humidity;
+      Serial.print(DoAmTam);
+      if (DoAmTam != DoAm) {
+        DoAm = DoAmTam;
+        lcd.setCursor(0, 1);
+        lcd.print("Do Am:          ");
+        lcd.setCursor(10, 1);
+        lcd.print(DoAm);
+        lcd.setCursor(13, 1);
+        lcd.print("%");
+      }
+      Serial.println("%");
+    }
+    lastReadTemp = millis();
+  }
+}
+
+
+/*************************************************************************************************/
+
 void setup() {
-  Serial.begin(115200); 
+  Serial.begin(115200);
   delay(1000);
-  pinMode(LED_BUILTIN, OUTPUT); //chan xuat tin hieu
-//  dht.begin();
+  pinMode(LED_BUILTIN, OUTPUT); //chan xuat tin hieu 
+  // Setup LCD
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Nhiet do:       ");
+  lcd.setCursor(0, 1);
+  lcd.print("Do am:          ");
+// Setup DHT11
+  dht.begin();
+  Serial.println("DHTxx Unified Sensor Example");
+// Print temperature sensor details.
+  sensor_t sensor;
+  dht.temperature().getSensor(&sensor);
+  Serial.println("------------------------------------");
+  Serial.println("Temperature");
+  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
+  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
+  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
+  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" *C");
+  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" *C");
+  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" *C");
+  Serial.println("------------------------------------");
+// Print humidity sensor details.
+  dht.humidity().getSensor(&sensor);
+  Serial.println("------------------------------------");
+  Serial.println("Humidity");
+  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
+  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
+  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
+  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println("%");
+  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println("%");
+  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println("%");
+  Serial.println("------------------------------------");
+  lcd.createChar(1, degree);
   
-//ket noi toi wifi             
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);                                     
+//ket noi toi wifi
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("Kết nối tới ");
   Serial.print(WIFI_SSID);
   while (WiFi.status() != WL_CONNECTED) {
@@ -33,45 +141,38 @@ void setup() {
   Serial.println(WIFI_SSID);
   Serial.print("IP Address: ");
   //print local IP address
-  Serial.println(WiFi.localIP());  
-//ket noi toi firebase thong qua xac thuc ID host va key Auth
-  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);   
-                                   
-//  Firebase.setString("ledStatus", "OFF");                                         
+  Serial.println(WiFi.localIP());
+  //ket noi toi firebase thong qua xac thuc ID host va key Auth
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+
+  //  Firebase.setString("ledStatus", "OFF");
 }
 
+/*************************************************************************************/
+
 void loop() {
-// lấy giá trị (dạng chuỗi) trạng thái được input từ firebase và lưu giá trị vào biến
-  ledStatus = Firebase.getString("LED/ledStatus");                           
+   KtVaHienThiNhietDo();
+   
+  // lấy giá trị (dạng chuỗi) trạng thái được input từ firebase và lưu giá trị vào biến
+  
+  ledStatus = Firebase.getString("LED/ledStatus");
   Serial.println(ledStatus);
-// gửi giá trị (chuỗi) lên firebases
-//nhietdoStatus = Firebase.setString ("nhietdoStatus","hanguyentieuyen");
 
-  
-
-  
-// so sánh trạng thái led dc input từ firebase
-  if (ledStatus == "1") {                                                      
-    Serial.println("Led bật");                         
-    digitalWrite(LED_BUILTIN, LOW);                                                                                                
-  } 
-
-  else if (ledStatus == "0") {                                                 
+  // so sánh trạng thái led dc input từ firebase
+  if (ledStatus == "1") {
+    Serial.println("Led bật");
+    digitalWrite(LED_BUILTIN, LOW);
+  }
+  else if (ledStatus == "0") {
     Serial.println("Led tắt");
-    digitalWrite(LED_BUILTIN, HIGH);                                            
+    digitalWrite(LED_BUILTIN, HIGH);
   }
   else {
     Serial.println("Chưa nhận giá trị on off");
   }
 
-//////////////////////////////////////////////////  
-
-//  float doam = dht.readHumidity();
-//  float nhietdo = dht.readTemperature();
-//  Serial.println("Do am: ");
-//  Serial.println(doam);
-//  Serial.println("Nhiet do: ");
-//  Serial.println(nhietdo);
-//  Firebase.setFloat("nhietdo",nhietdo);
-//  Firebase.setFloat("doam",doam);
+  // gửi giá trị nhiệt độ và độ ẩm lên firebases
+  Firebase.setFloat("DHT11/Temp",NhietDo);
+  Firebase.setFloat("DHT11/Hum",DoAm);
+ 
 }
