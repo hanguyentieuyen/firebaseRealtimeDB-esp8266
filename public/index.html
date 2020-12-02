@@ -5,65 +5,42 @@
         <link rel="stylesheet" type="text/css" href = "style.css"/>
     </head>
     <body>
-        
 
-            <div class="led">
-                <h3>Turn on/off Led</h3>
-                <div>
-                    <button class="btn1" onclick="onClick()">ON</button>
-                    <button class="btn2" onclick="offClick()">OFF</button>
+           
+            <div class="container">
+              
+                <div class="ledControl">
+                    <div id="circle" class="circle" ></div>
+                    <input type="button" class="btnOnOff" value="OFF" id="onoff" onclick="onoff()">
+                </div>
+                <div class="ledControl1">
+                    <div id="circle1" class="circle1" ></div>
+                    <input type="button" class="btnOnOff1" value="OFF" id="onoff1" onclick="onoff1()">
                 </div>
             </div>
+
+            <!-- <div class="led">
+                <h3>Turn on/off Led</h3>
+                <div>
+                    <button id="btn1" class="btn1"  onclick="offClick()">ON</button>
+                    <button class="btn2" onclick="offClick()">OFF</button>
+                </div>
+            </div> -->
         
-            <div class="temp-humidity">
-                <h3>Temperature</h3>
-                <span id="text"></span> <span>C</span>
-        
+            <div class="temp">
+                <h3>Nhiệt độ</h3>
+                <span id="textTemp"></span> <span>C</span>       
+            </div>
+            <div class="hum">
+                <h3>Độ ẩm</h3>
+                <span id="textHum"></span> <span>%</span>       
             </div>
 
-        
-        
-        <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-functions.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-database.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-analytics.js">s</script>
-        
-        <script>
-             var firebaseConfig = {
-                apiKey: "AIzaSyC8A5duP8DLcd_4sHJyaZxHtWoOy-kIx00",
-                authDomain: "esprealtimedb.firebaseapp.com",
-                databaseURL: "https://esprealtimedb.firebaseio.com",
-                projectId: "esprealtimedb",
-                storageBucket: "esprealtimedb.appspot.com",
-                messagingSenderId: "573051056608",
-                appId: "1:573051056608:web:7cca5e2e240373a0ccbb85",
-                measurementId: "G-QNSLTNSM2C"
-            };
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-/*******************************************************************************/
-           
 
-
-        function onClick(){
-
-            var root = firebase.database().ref();
-            root.child("LED/ledStatus").set("1");
-        }
-            
-        function offClick(){
-
-            var root = firebase.database().ref()
-            root.child("LED/ledStatus").set("0");
-        }
-
-        const temp = document.getElementById('text');
-        var rootChild = firebase.database().ref().child('DH11');
-        rootChild.on('child_added',function(snapshot){
-        // temp.innerText = JSON.stringify(snapshot.val(),null,3)
-        temp.innerText = snapshot.val();
-       
-        })
-        </script>
+            <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-functions.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-database.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-analytics.js">s</script>
+            <script src="script.js"></script>
     </body>
 </html>
