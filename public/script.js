@@ -75,12 +75,12 @@ function onoff1() {
 const temp = document.getElementById('textTemp');
 const hum = document.getElementById('textHum');
 
-var rootTemp = firebase.database().ref('DHT11').child('Temp');
-rootTemp.on ('value', function(snapshot) {
+var rootTemp = firebase.database().ref('DHT11');
+rootTemp.child('Temp').on ('value', function(snapshot) {
   temp.innerText = snapshot.val();
 })
 
-var rootHum = firebase.database().ref('DHT11').child('Hum');
-rootHum.on ('value', function(snapshot) {
+var rootHum = firebase.database().ref('DHT11');
+rootHum.child('Hum').on ('value', function(snapshot) {
   hum.innerText = snapshot.val();
 })
