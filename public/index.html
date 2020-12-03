@@ -9,28 +9,31 @@
   <body>
 
 
-    <div class="container">
 
-      <div class="ledControl">
-        <div id="circle" class="circle"></div>
-        <input type="button" class="btnOnOff" value="OFF" id="onoff" onclick="onoff()">
+     <div class="container">
+       
+       <div class="ledControl">
+         <div id="circle" class="circle"></div>
+         <input type="button" class="btnOnOff" value="OFF" id="onoff" onclick="onoff()">
+        </div>
+        
+        <div class="ledControl1">
+          <div id="circle1" class="circle1"></div>
+          <input type="button" class="btnOnOff1" value="OFF" id="onoff1" onclick="onoff1()">
+        </div>
+        
+      </div>  
+      
+      <div class="temp">
+        <h3>Nhiệt độ</h3>
+        <span id="textTemp"></span> <span>°C</span>
       </div>
-      <div class="ledControl1">
-        <div id="circle1" class="circle1"></div>
-        <input type="button" class="btnOnOff1" value="OFF" id="onoff1" onclick="onoff1()">
+      <div class="hum">
+        <h3>Độ ẩm</h3>
+        <span id="textHum"></span> <span>%</span>
       </div>
-    </div>
-
-
-
-    <div class="temp">
-      <h3>Nhiệt độ</h3>
-      <span id="textTemp"></span> <span>°C</span>
-    </div>
-    <div class="hum">
-      <h3>Độ ẩm</h3>
-      <span id="textHum"></span> <span>%</span>
-    </div>
+  
+      
 
 
     <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
