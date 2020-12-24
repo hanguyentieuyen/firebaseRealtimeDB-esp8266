@@ -12,9 +12,11 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 DHT_Unified dht(DHTPIN, DHTTYPE);
 //fire base
 #define FIREBASE_HOST "esprealtimedb.firebaseio.com"
-#define FIREBASE_AUTH "GEhbDHojbC8ccEGPOcrackwokjLo5Jx6I55AoXEJ"
-#define WIFI_SSID "Lau_2_new"
-#define WIFI_PASSWORD "danghuynhkienvan"
+#define FIREBASE_AUTH "[Your key secret realtime database"
+#define WIFI_SSID "Lau_2_new" //Your SSID Wifi
+#define WIFI_PASSWORD "danghuynhkienvan"  //Your Password Wifi
+#define relay1 D6
+#define relay2 D7
 
 unsigned int NhietDo = 0, DoAm = 0;
 unsigned int delayDocNhietDo = 1000;  //ms
@@ -31,6 +33,7 @@ byte degree[8] = {  // dùng để hiển thị dấu độ
 };
 // Biến lưu status từ firebase
 String ledStatus = "";
+String ledStatus1 = "";
 
 /***************************************************************************************************/
 
@@ -90,9 +93,13 @@ void KtVaHienThiNhietDo() {
 /*************************************************************************************************/
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT); //chan xuat tin hieu 
+  pinMode(relay1, OUTPUT);
+  digitalWrite(relay1, LOW);
+  pinMode(relay2, OUTPUT);
+  digitalWrite(relay2, LOW);
   // Setup LCD
   lcd.init();
   lcd.backlight();
@@ -102,30 +109,30 @@ void setup() {
   lcd.print("Do am:          ");
 // Setup DHT11
   dht.begin();
-  Serial.println("DHTxx Unified Sensor Example");
+//  Serial.println("DHTxx Unified Sensor Example");
 // Print temperature sensor details.
-  sensor_t sensor;
-  dht.temperature().getSensor(&sensor);
-  Serial.println("------------------------------------");
-  Serial.println("Temperature");
-  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
-  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
-  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
-  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" *C");
-  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" *C");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" *C");
-  Serial.println("------------------------------------");
+//  sensor_t sensor;
+//  dht.temperature().getSensor(&sensor);
+//  Serial.println("------------------------------------");
+//  Serial.println("Temperature");
+//  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
+//  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
+//  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
+//  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" *C");
+//  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" *C");
+//  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" *C");
+//  Serial.println("------------------------------------");
 // Print humidity sensor details.
-  dht.humidity().getSensor(&sensor);
-  Serial.println("------------------------------------");
-  Serial.println("Humidity");
-  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
-  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
-  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
-  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println("%");
-  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println("%");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println("%");
-  Serial.println("------------------------------------");
+//  dht.humidity().getSensor(&sensor);
+//  Serial.println("------------------------------------");
+//  Serial.println("Humidity");
+//  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
+//  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
+//  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
+//  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println("%");
+//  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println("%");
+//  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println("%");
+//  Serial.println("------------------------------------");
   lcd.createChar(1, degree);
   
 //ket noi toi wifi
@@ -156,16 +163,34 @@ void loop() {
   // lấy giá trị (dạng chuỗi) trạng thái được input từ firebase và lưu giá trị vào biến
   
   ledStatus = Firebase.getString("LED/ledStatus");
+  ledStatus1 = Firebase.getString("LED/ledStatus1");
   Serial.println(ledStatus);
 
   // so sánh trạng thái led dc input từ firebase
   if (ledStatus == "1") {
     Serial.println("Led bật");
     digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite (relay1,HIGH);
   }
   else if (ledStatus == "0") {
     Serial.println("Led tắt");
     digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite (relay1,LOW);
+  }
+  else {
+    Serial.println("Chưa nhận giá trị on off");
+  }
+
+
+  if (ledStatus1 == "1") {
+    Serial.println("Led bật");
+    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite (relay2,HIGH);
+  }
+  else if (ledStatus1 == "0") {
+    Serial.println("Led tắt");
+    digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite (relay2,LOW);
   }
   else {
     Serial.println("Chưa nhận giá trị on off");
