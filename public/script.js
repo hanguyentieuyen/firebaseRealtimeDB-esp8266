@@ -1,9 +1,9 @@
 var firebaseConfig = {
-  apiKey: "AIzaSyC8A5duP8DLcd_4sHJyaZxHtWoOy-kIx00",
-  authDomain: "esprealtimedb.firebaseapp.com",
-  databaseURL: "https://esprealtimedb.firebaseio.com",
-  projectId: "esprealtimedb",
-  storageBucket: "esprealtimedb.appspot.com",
+  apiKey: "Your apiKey",
+  authDomain: "Your authDomain",
+  databaseURL: "Your databaseURL",
+  projectId: "Your projectId",
+  storageBucket: "Your storageBucket",
   messagingSenderId: "573051056608",
   appId: "1:573051056608:web:7cca5e2e240373a0ccbb85",
   measurementId: "G-QNSLTNSM2C"
